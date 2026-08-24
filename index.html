@@ -19,10 +19,10 @@
     --shadow-sm:0 1px 2px rgba(22,40,61,0.06), 0 1px 1px rgba(22,40,61,0.04);
     --shadow-md:0 4px 14px rgba(22,40,61,0.08), 0 2px 4px rgba(22,40,61,0.05);
     --shadow-lg:0 20px 50px rgba(22,40,61,0.18);
-    --radius:16px;
+    --radius:16px; --sidenav-w:76px;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;background:var(--paper);font-family:'Inter',ui-sans-serif,system-ui;color:var(--ink);-webkit-font-smoothing:antialiased;}
+  html,body{margin:0;padding:0;background:var(--paper);font-family:'Inter',ui-sans-serif,system-ui;color:var(--ink);-webkit-font-smoothing:antialiased;overscroll-behavior-y:none;}
   .disp{font-family:'Fraunces',serif;}
   .mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums;}
   button{cursor:pointer;font-family:inherit;border:none;background:none;}
@@ -31,6 +31,8 @@
   .hidden{display:none !important;}
   .scrollx{display:flex;overflow-x:auto;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;}
   .scrollx::-webkit-scrollbar{display:none;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes pulse{0%,100%{opacity:.55;}50%{opacity:.9;}}
 
   /* ================= LOGIN ================= */
   #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;
@@ -50,45 +52,73 @@
 
   /* ================= APP SHELL ================= */
   #appScreen{display:none;}
-  .hero{background:radial-gradient(900px 400px at 15% -20%, #2c4a6d 0%, var(--ink) 60%);padding:20px 28px 26px;}
-  .hero-top{display:flex;align-items:center;justify-content:space-between;max-width:1180px;margin:0 auto 18px;flex-wrap:wrap;gap:10px;}
+  .app-body{min-height:100vh;}
+
+  /* ---- Desktop side nav ---- */
+  .sidenav{display:none;}
+  @media (min-width:900px){
+    .sidenav{display:flex;flex-direction:column;align-items:center;position:fixed;top:0;left:0;bottom:0;width:var(--sidenav-w);
+      background:var(--ink);padding:18px 0;z-index:30;}
+    .sidenav .brand-logo{margin-bottom:22px;}
+    .navlink{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;color:var(--muted2);margin-bottom:6px;transition:background .15s,color .15s;}
+    .navlink.active{background:rgba(232,199,102,0.16);color:var(--gold);}
+    .navlink:hover{background:rgba(255,255,255,0.06);}
+    .sidenav-spacer{flex:1;}
+    .sidenav .avatar{margin-bottom:8px;}
+    .sidenav .signout-btn{width:40px;height:40px;padding:0;border-radius:11px;justify-content:center;}
+    .sidenav .signout-btn span{display:none;}
+    .app-main{margin-left:var(--sidenav-w);}
+  }
+
+  /* ---- Mobile bottom nav ---- */
+  .bottomnav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);
+    display:flex;z-index:30;padding:6px 8px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -4px 16px rgba(22,40,61,0.06);}
+  @media (min-width:900px){ .bottomnav{display:none;} }
+  .navlink-mobile{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;color:var(--muted);border-radius:10px;}
+  .navlink-mobile.active{color:var(--ink);}
+  .navlink-mobile .lbl{font-size:10px;font-weight:700;}
+
   .brand{display:flex;align-items:center;gap:10px;}
   .brand-logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(155deg,var(--gold),var(--gold-dim));display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .brand h1{color:#fff;font-size:clamp(15px,3.6vw,19px);margin:0;letter-spacing:-0.01em;}
-  .user-chip{display:flex;align-items:center;gap:10px;flex-shrink:0;}
   .avatar{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.14);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
   #userEmailLabel{color:var(--muted2);font-size:12.5px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .signout-btn{background:rgba(255,255,255,0.1);color:#fff;padding:8px 13px;border-radius:8px;font-size:11.5px;font-weight:600;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:5px;transition:background .12s;}
   .signout-btn:hover{background:rgba(255,255,255,0.18);}
 
-  .pillrow{gap:6px;padding-bottom:14px;max-width:1180px;margin:0 auto;}
+  .mobile-topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--ink);}
+  @media (min-width:900px){ .mobile-topbar{display:none;} }
+
+  .view{animation:fadeIn .25s ease;}
+
+  /* ---- Hero (Home view) ---- */
+  .hero{background:radial-gradient(900px 400px at 15% -20%, #2c4a6d 0%, var(--ink) 60%);padding:18px 24px 24px;}
+  @media (min-width:900px){ .hero{padding:26px 32px 28px;} }
+  .hero-inner{max-width:1000px;margin:0 auto;}
+
+  .month-pillrow{padding-bottom:2px;}
   .ypill{flex-shrink:0;padding:6px 14px;border-radius:999px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.08);color:#fff;scroll-snap-align:start;transition:background .12s;}
   .ypill.active{background:var(--gold);color:var(--ink);}
   .mpill{flex-shrink:0;padding:5px 12px;border-radius:999px;font-size:11px;font-weight:600;background:transparent;color:var(--muted2);border:1px solid rgba(255,255,255,0.14);scroll-snap-align:start;}
   .mpill.active{background:rgba(232,199,102,0.2);color:var(--gold);border-color:var(--gold);}
-  .month-pillrow{max-width:1180px;margin:0 auto;padding-bottom:2px;}
+  .pillrow{gap:6px;padding-bottom:14px;}
 
-  @media (max-width: 480px){
-    #userEmailLabel{display:none;}
-  }
-
-  /* fade hint at the edge of horizontally-scrolling rows, hinting there's more to swipe to */
-  .scroll-wrap{position:relative;}
-  .scroll-wrap::after{content:"";position:absolute;top:0;right:0;bottom:0;width:30px;pointer-events:none;}
-  .hero .scroll-wrap::after{background:linear-gradient(90deg, transparent, #16283D 85%);}
-  .content .scroll-wrap::after{background:linear-gradient(90deg, transparent, var(--paper) 85%);}
-
-  .hero-balance{max-width:1180px;margin:6px auto 0;}
   .hero-balance-label{color:var(--muted2);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
-  .hero-balance-val{color:#fff;font-size:clamp(28px,7.5vw,44px);font-weight:800;line-height:1.1;margin:4px 0 16px;letter-spacing:-0.02em;}
+  .hero-balance-val{color:#fff;font-size:clamp(30px,7.5vw,46px);font-weight:800;line-height:1.1;margin:4px 0 18px;letter-spacing:-0.02em;}
   .hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;}
-  .hero-stat{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:11px 13px;transition:background .15s,transform .1s;}
+  .hero-stat{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:11px 13px;transition:background .15s;}
   .hero-stat:hover{background:rgba(255,255,255,0.1);}
   .hero-stat-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;margin-bottom:6px;}
   .hero-stat-label{color:var(--muted2);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;}
   .hero-stat-val{color:#fff;font-size:16px;font-weight:700;margin-top:2px;}
 
-  .content{max-width:1180px;margin:0 auto;padding:24px 28px 100px;}
+  .scroll-wrap{position:relative;}
+  .scroll-wrap::after{content:"";position:absolute;top:0;right:0;bottom:0;width:30px;pointer-events:none;}
+  .hero .scroll-wrap::after{background:linear-gradient(90deg, transparent, #16283D 85%);}
+  .content .scroll-wrap::after{background:linear-gradient(90deg, transparent, var(--paper) 85%);}
+
+  .content{max-width:1000px;margin:0 auto;padding:24px 20px 100px;}
+  @media (min-width:900px){ .content{padding:28px 32px 60px;} }
   .period-label{font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:14px;}
   .period-label b{color:var(--ink);}
 
@@ -97,13 +127,17 @@
   .sec-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
   .sec-label{font-size:10px;text-transform:uppercase;letter-spacing:.03em;font-weight:700;color:var(--muted);margin-bottom:5px;}
   .sec-val{font-size:18px;font-weight:700;}
-  .sec-bar-wrap{display:flex;align-items:center;gap:10px;}
-  .sec-bar-bg{flex:1;height:6px;border-radius:999px;background:var(--paper);overflow:hidden;}
-  .sec-bar-fill{height:100%;border-radius:999px;}
+
+  .ring-card{display:flex;align-items:center;gap:16px;}
+  .ring-wrap{position:relative;width:64px;height:64px;flex-shrink:0;}
+  .ring-wrap svg{transform:rotate(-90deg);}
+  .ring-wrap .ring-track{fill:none;stroke:var(--paper);stroke-width:7;}
+  .ring-wrap .ring-fill{fill:none;stroke:var(--gold);stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1),stroke .3s;}
+  .ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;font-family:'IBM Plex Mono',monospace;}
 
   .panel{background:var(--card);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow-sm);border:1px solid var(--line);margin-bottom:24px;}
-  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-  .section-title{font-size:16px;font-weight:700;}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;}
+  .section-title{font-size:clamp(14px,3.5vw,16px);font-weight:700;}
   .tabbar{display:flex;background:var(--paper);border-radius:10px;padding:3px;gap:2px;}
   .tabbtn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;color:var(--muted);}
   .tabbtn.active{background:var(--card);color:var(--ink);box-shadow:var(--shadow-sm);}
@@ -112,19 +146,23 @@
   .cat-top .name{display:flex;align-items:center;gap:7px;}
   .cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
   .cat-bar-bg{height:7px;border-radius:999px;background:var(--paper);overflow:hidden;display:flex;}
+  .cat-bar-bg > div{transition:width .5s cubic-bezier(.4,0,.2,1);}
   .empty-mini{font-size:12.5px;color:var(--muted);padding:20px 0;text-align:center;}
+  .see-all{font-size:12px;font-weight:700;color:var(--blue);}
 
   /* ---------- Goals ---------- */
   .goals-scroll{gap:14px;padding-bottom:6px;margin:0 -2px;}
-  .goal-card{background:var(--card);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);border:1px solid var(--line);flex:0 0 250px;scroll-snap-align:start;transition:box-shadow .15s,transform .15s;}
+  .goals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+  .goal-card{background:var(--card);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);border:1px solid var(--line);transition:box-shadow .15s,transform .15s;}
   .goal-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+  .goals-scroll .goal-card{flex:0 0 250px;scroll-snap-align:start;}
   .goal-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px;}
   .goal-name{font-size:14.5px;font-weight:700;}
   .goal-badge{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.02em;padding:3px 8px;border-radius:999px;background:var(--paper);color:var(--muted);white-space:nowrap;}
   .goal-amounts{font-size:12px;color:var(--muted);margin-bottom:9px;}
   .goal-amounts b{color:var(--ink);font-family:'IBM Plex Mono',monospace;font-size:13px;}
   .goal-bar-bg{height:8px;border-radius:999px;background:var(--paper);overflow:hidden;margin-bottom:11px;}
-  .goal-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--gold-dim),var(--gold));transition:width .3s;}
+  .goal-bar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--gold-dim),var(--gold));transition:width .6s cubic-bezier(.4,0,.2,1);}
   .goal-req{font-size:11.5px;color:var(--muted);margin-bottom:8px;}
   .goal-pace{display:inline-block;font-size:10.5px;font-weight:700;padding:4px 9px;border-radius:999px;}
   .pace-ontrack{background:var(--green-bg);color:var(--green);}
@@ -133,17 +171,28 @@
   .goal-actions{margin-top:12px;display:flex;gap:6px;}
   .goal-actions button{font-size:11px;font-weight:600;padding:6px 10px;border-radius:7px;border:1px solid var(--line);color:var(--muted);}
   .goal-actions button:hover{background:var(--paper);color:var(--ink);}
-  .addgoal-card{flex:0 0 180px;border:2px dashed var(--line);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:13px;font-weight:700;scroll-snap-align:start;}
+  .addgoal-card{flex:0 0 180px;border:2px dashed var(--line);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:13px;font-weight:700;scroll-snap-align:start;min-height:150px;}
   .addgoal-card:hover{border-color:var(--gold);color:var(--ink);background:#FFFCF3;}
   .addgoal-plus{width:34px;height:34px;border-radius:50%;background:var(--paper);display:flex;align-items:center;justify-content:center;}
 
   /* ---------- Entries ---------- */
-  .entries-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-  .addbtn{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:9px 16px;border-radius:10px;background:var(--ink);color:#fff;box-shadow:var(--shadow-sm);}
-  .addbtn:hover{background:var(--ink2);}
+  .search-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+  .search-box{flex:1;min-width:180px;position:relative;}
+  .search-box input{width:100%;padding:10px 14px 10px 38px;border-radius:10px;border:1.5px solid var(--line);font-size:13.5px;outline:none;background:var(--card);}
+  .search-box input:focus{border-color:var(--gold);}
+  .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);}
+  .filter-chips{display:flex;gap:6px;flex-wrap:wrap;}
+  .fchip{padding:9px 14px;border-radius:10px;font-size:12px;font-weight:700;background:var(--card);border:1.5px solid var(--line);color:var(--muted);}
+  .fchip.active{background:var(--ink);border-color:var(--ink);color:#fff;}
+
   .group-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin:18px 0 9px;}
   .group-label:first-child{margin-top:0;}
-  .entry-row{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;margin-bottom:8px;transition:box-shadow .12s;}
+
+  .entry-wrap{position:relative;border-radius:14px;overflow:hidden;margin-bottom:8px;}
+  .entry-delete-behind{position:absolute;inset:0;background:var(--red);display:flex;align-items:center;justify-content:flex-end;}
+  .entry-delete-behind button{color:#fff;font-size:12px;font-weight:700;padding:0 20px;height:100%;display:flex;align-items:center;gap:6px;}
+  .entry-row{position:relative;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 12px;
+    transition:box-shadow .12s; touch-action:pan-y;}
   .entry-row:hover{box-shadow:var(--shadow-sm);}
   .entry-row.income{background:var(--green-bg);border-color:#D3E4DA;}
   .entry-row.investment{background:var(--blue-bg);border-color:#D4E0EC;}
@@ -160,7 +209,11 @@
   .status-btn.pending{background:var(--red);}
   .iconbtn{flex-shrink:0;padding:6px;color:#b3a892;border-radius:8px;}
   .iconbtn:hover{color:var(--ink);background:var(--paper);}
+  .swipe-hint{text-align:center;font-size:11px;color:var(--muted);margin-bottom:10px;}
   .empty{text-align:center;font-size:13.5px;color:var(--muted);padding:50px 0;}
+
+  .skeleton{background:linear-gradient(90deg,#EDE7D8 25%,#F5F1E6 37%,#EDE7D8 63%);background-size:400% 100%;animation:shimmer 1.4s ease infinite;border-radius:14px;}
+  @keyframes shimmer{0%{background-position:100% 50%;}100%{background-position:0 50%;}}
 
   /* ---------- Floating action button ---------- */
   .fab{position:fixed;bottom:26px;right:26px;width:56px;height:56px;border-radius:50%;
@@ -168,13 +221,14 @@
     display:flex;align-items:center;justify-content:center;z-index:40;transition:transform .12s;}
   .fab:hover{transform:scale(1.06);}
   .fab:active{transform:scale(0.95);}
+  @media (max-width:899px){ .fab{bottom:76px;} }
 
   /* ---------- Modal ---------- */
   .modal-overlay{position:fixed;inset:0;background:rgba(15,25,38,0.55);backdrop-filter:blur(2px);z-index:50;display:flex;align-items:flex-end;justify-content:center;}
   .modal-content{width:100%;max-width:520px;background:var(--card);border-radius:20px 20px 0 0;padding:22px 22px 26px;max-height:88vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .22s ease;}
   @keyframes slideUp{from{transform:translateY(100%);}to{transform:translateY(0);}}
-  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-  .modal-overlay{animation:fadeIn .15s ease;}
+  @keyframes fadeInOverlay{from{opacity:0;}to{opacity:1;}}
+  .modal-overlay{animation:fadeInOverlay .15s ease;}
   .modal-handle{width:36px;height:4px;background:var(--line);border-radius:999px;margin:0 auto 16px;}
   .form-heading{font-size:15px;font-weight:700;margin-bottom:14px;}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
@@ -196,21 +250,18 @@
     .modal-content{border-radius:20px;}
     .modal-handle{display:none;}
   }
-
-  @media (max-width: 900px){
-    .form-grid{grid-template-columns:1fr;}
-  }
+  @media (max-width: 480px){ #userEmailLabel{display:none;} }
   @media (max-width: 640px){
-    .hero{padding:16px 16px 22px;}
-    .brand h1{font-size:16px;}
-    .content{padding:18px 14px 100px;}
     .panel{padding:16px;}
     .toggle-row{flex-wrap:wrap;}
     .entry-side{width:100%;justify-content:flex-start;margin-left:0;margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);gap:10px;}
     .entry-amt{min-width:auto;}
-    .fab{bottom:20px;right:20px;width:52px;height:52px;}
     .login-card{padding:30px 24px;}
   }
+  @media (max-width: 900px){ .form-grid{grid-template-columns:1fr;} }
+
+  /* ---------- Confetti ---------- */
+  #confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:100;}
 </style>
 </head>
 <body>
@@ -232,111 +283,187 @@
 </div>
 
 <div id="appScreen">
-  <div class="hero">
-    <div class="hero-top">
-      <div class="brand">
-        <div class="brand-logo">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#16283D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Z"/><path d="M4 7V5a2 2 0 0 1 2-2h9"/><circle cx="16" cy="12" r="1.2" fill="#16283D" stroke="none"/></svg>
-        </div>
-        <h1 class="disp">Payday Ledger</h1>
+  <div class="app-body">
+    <nav class="sidenav">
+      <div class="brand-logo">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#16283D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Z"/><path d="M4 7V5a2 2 0 0 1 2-2h9"/><circle cx="16" cy="12" r="1.2" fill="#16283D" stroke="none"/></svg>
       </div>
-      <div class="user-chip">
-        <div class="avatar" id="userAvatar"></div>
-        <span id="userEmailLabel"></span>
-        <button class="signout-btn" onclick="handleSignOut()">Sign out</button>
-      </div>
-    </div>
-
-    <div class="scroll-wrap"><div class="scrollx pillrow" id="yearRow"></div></div>
-    <div class="scroll-wrap"><div class="scrollx pillrow month-pillrow" id="monthRow"></div></div>
-
-    <div class="hero-balance">
-      <div class="hero-balance-label" id="heroLabel">Cash left right now</div>
-      <div class="hero-balance-val mono" id="kCashLeft">₹0</div>
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <div class="hero-stat-icon" style="background:rgba(63,122,91,0.2)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7FD9A8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13"/><path d="M7 11l5 5 5-5"/><path d="M5 21h14"/></svg>
-          </div>
-          <div class="hero-stat-label">Salary</div>
-          <div class="hero-stat-val mono" id="kSalary">₹0</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-icon" style="background:rgba(63,122,91,0.2)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7FD9A8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-          </div>
-          <div class="hero-stat-label">Paid</div>
-          <div class="hero-stat-val mono" id="kPaid">₹0</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-icon" style="background:rgba(181,72,52,0.25)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F2A895" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-          </div>
-          <div class="hero-stat-label">Still due</div>
-          <div class="hero-stat-val mono" id="kDue">₹0</div>
-        </div>
-        <div class="hero-stat">
-          <div class="hero-stat-icon" style="background:rgba(62,111,166,0.25)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9DC1EA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>
-          </div>
-          <div class="hero-stat-label">Invested</div>
-          <div class="hero-stat-val mono" id="kInvested">₹0</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="content">
-    <div class="period-label">Showing: <b id="periodLabel"></b></div>
-
-    <div class="secondary-grid">
-      <div class="sec-card">
-        <div class="sec-label">Total planned</div>
-        <div class="sec-val mono" id="kPlanned">₹0</div>
-      </div>
-      <div class="sec-card">
-        <div class="sec-label">Projected left at period end</div>
-        <div class="sec-val mono" id="kProjLeft">₹0</div>
-      </div>
-      <div class="sec-card">
-        <div class="sec-label">Pending payments</div>
-        <div class="sec-val mono" id="kPending" style="color:var(--red)">0</div>
-      </div>
-      <div class="sec-card">
-        <div class="sec-label">% of planned paid</div>
-        <div class="sec-bar-wrap">
-          <div class="sec-val mono" id="kPct">0%</div>
-          <div class="sec-bar-bg"><div class="sec-bar-fill" id="pctBar" style="width:0%;background:var(--gold)"></div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-head">
-        <div class="section-title disp">Breakdown</div>
-        <div class="tabbar">
-          <button class="tabbtn active" id="tabExpenseBtn" onclick="setBreakdownTab('expense')">Expenses</button>
-          <button class="tabbtn" id="tabInvestmentBtn" onclick="setBreakdownTab('investment')">Investments</button>
-        </div>
-      </div>
-      <div id="expenseBreakdown"></div>
-      <div id="investmentBreakdown" class="hidden"></div>
-    </div>
-
-    <div class="panel-head">
-      <div class="section-title disp">Goals</div>
-    </div>
-    <div class="scroll-wrap"><div class="scrollx goals-scroll" id="goalsRow"></div></div>
-
-    <div class="entries-head" style="margin-top:28px;">
-      <div class="section-title disp">Entries</div>
-      <button class="addbtn" onclick="openEntryModal()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-        Add entry
+      <button class="navlink active" data-tab="home" onclick="switchTab('home')" title="Home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 22V12h6v10"/></svg>
       </button>
+      <button class="navlink" data-tab="entries" onclick="switchTab('entries')" title="Entries">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>
+      </button>
+      <button class="navlink" data-tab="goals" onclick="switchTab('goals')" title="Goals">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+      </button>
+      <div class="sidenav-spacer"></div>
+      <div class="avatar" id="userAvatarDesktop"></div>
+      <button class="signout-btn" onclick="handleSignOut()" title="Sign out">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        <span>Sign out</span>
+      </button>
+    </nav>
+
+    <div class="app-main">
+      <div class="mobile-topbar">
+        <div class="brand">
+          <div class="brand-logo">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16283D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7Z"/><path d="M4 7V5a2 2 0 0 1 2-2h9"/><circle cx="16" cy="12" r="1.2" fill="#16283D" stroke="none"/></svg>
+          </div>
+          <h1 class="disp">Payday Ledger</h1>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="avatar" id="userAvatar"></div>
+          <span id="userEmailLabel"></span>
+          <button class="signout-btn" onclick="handleSignOut()">Sign out</button>
+        </div>
+      </div>
+
+      <!-- ============ HOME VIEW ============ -->
+      <div class="view" id="viewHome">
+        <div class="hero">
+          <div class="hero-inner">
+            <div class="scroll-wrap"><div class="scrollx pillrow" id="yearRow"></div></div>
+            <div class="scroll-wrap"><div class="scrollx pillrow month-pillrow" id="monthRow"></div></div>
+
+            <div class="hero-balance-label">Cash left right now</div>
+            <div class="hero-balance-val mono" id="kCashLeft">₹0</div>
+            <div class="hero-stats">
+              <div class="hero-stat">
+                <div class="hero-stat-icon" style="background:rgba(63,122,91,0.2)">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7FD9A8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13"/><path d="M7 11l5 5 5-5"/><path d="M5 21h14"/></svg>
+                </div>
+                <div class="hero-stat-label">Salary</div>
+                <div class="hero-stat-val mono" id="kSalary">₹0</div>
+              </div>
+              <div class="hero-stat">
+                <div class="hero-stat-icon" style="background:rgba(63,122,91,0.2)">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7FD9A8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                </div>
+                <div class="hero-stat-label">Paid</div>
+                <div class="hero-stat-val mono" id="kPaid">₹0</div>
+              </div>
+              <div class="hero-stat">
+                <div class="hero-stat-icon" style="background:rgba(181,72,52,0.25)">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#F2A895" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+                </div>
+                <div class="hero-stat-label">Still due</div>
+                <div class="hero-stat-val mono" id="kDue">₹0</div>
+              </div>
+              <div class="hero-stat">
+                <div class="hero-stat-icon" style="background:rgba(62,111,166,0.25)">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9DC1EA" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>
+                </div>
+                <div class="hero-stat-label">Invested</div>
+                <div class="hero-stat-val mono" id="kInvested">₹0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content">
+          <div class="period-label">Showing: <b id="periodLabel"></b></div>
+
+          <div class="secondary-grid">
+            <div class="sec-card">
+              <div class="sec-label">Total planned</div>
+              <div class="sec-val mono" id="kPlanned">₹0</div>
+            </div>
+            <div class="sec-card">
+              <div class="sec-label">Projected left at period end</div>
+              <div class="sec-val mono" id="kProjLeft">₹0</div>
+            </div>
+            <div class="sec-card">
+              <div class="sec-label">Pending payments</div>
+              <div class="sec-val mono" id="kPending" style="color:var(--red)">0</div>
+            </div>
+            <div class="sec-card ring-card">
+              <div class="ring-wrap">
+                <svg width="64" height="64" viewBox="0 0 64 64">
+                  <circle class="ring-track" cx="32" cy="32" r="26"></circle>
+                  <circle class="ring-fill" id="pctRing" cx="32" cy="32" r="26" stroke-dasharray="163.4" stroke-dashoffset="163.4"></circle>
+                </svg>
+                <div class="ring-pct" id="kPct">0%</div>
+              </div>
+              <div>
+                <div class="sec-label">% Planned Paid</div>
+                <div style="font-size:11.5px;color:var(--muted)">of this period's expenses</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div class="section-title disp">Breakdown</div>
+              <div class="tabbar">
+                <button class="tabbtn active" id="tabExpenseBtn" onclick="setBreakdownTab('expense')">Expenses</button>
+                <button class="tabbtn" id="tabInvestmentBtn" onclick="setBreakdownTab('investment')">Investments</button>
+              </div>
+            </div>
+            <div id="expenseBreakdown"></div>
+            <div id="investmentBreakdown" class="hidden"></div>
+          </div>
+
+          <div class="panel-head">
+            <div class="section-title disp">Goals</div>
+            <button class="see-all" onclick="switchTab('goals')">See all</button>
+          </div>
+          <div class="scroll-wrap"><div class="scrollx goals-scroll" id="goalsRowHome"></div></div>
+
+          <div class="panel-head" style="margin-top:28px;">
+            <div class="section-title disp">Recent entries</div>
+            <button class="see-all" onclick="switchTab('entries')">See all</button>
+          </div>
+          <div id="recentEntriesList"></div>
+        </div>
+      </div>
+
+      <!-- ============ ENTRIES VIEW ============ -->
+      <div class="view hidden" id="viewEntries">
+        <div class="content" style="padding-top:20px;">
+          <div class="period-label">Showing: <b id="periodLabelEntries"></b></div>
+          <div class="search-row">
+            <div class="search-box">
+              <span class="search-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></span>
+              <input type="text" id="entrySearch" placeholder="Search category or note...">
+            </div>
+          </div>
+          <div class="filter-chips" style="margin-bottom:18px;">
+            <button class="fchip active" data-ft="all" onclick="setTypeFilter('all')">All</button>
+            <button class="fchip" data-ft="income" onclick="setTypeFilter('income')">Income</button>
+            <button class="fchip" data-ft="expense" onclick="setTypeFilter('expense')">Expense</button>
+            <button class="fchip" data-ft="investment" onclick="setTypeFilter('investment')">Investment</button>
+          </div>
+          <div class="swipe-hint">Swipe a row left to delete</div>
+          <div id="entriesListFull"></div>
+        </div>
+      </div>
+
+      <!-- ============ GOALS VIEW ============ -->
+      <div class="view hidden" id="viewGoals">
+        <div class="content" style="padding-top:20px;">
+          <div class="panel-head"><div class="section-title disp">All goals</div></div>
+          <div class="goals-grid" id="goalsGridFull"></div>
+        </div>
+      </div>
     </div>
-    <div id="entriesList"></div>
   </div>
+
+  <nav class="bottomnav">
+    <button class="navlink-mobile active" data-tab="home" onclick="switchTab('home')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M9 22V12h6v10"/></svg>
+      <span class="lbl">Home</span>
+    </button>
+    <button class="navlink-mobile" data-tab="entries" onclick="switchTab('entries')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>
+      <span class="lbl">Entries</span>
+    </button>
+    <button class="navlink-mobile" data-tab="goals" onclick="switchTab('goals')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+      <span class="lbl">Goals</span>
+    </button>
+  </nav>
 
   <button class="fab" onclick="openEntryModal()" title="Add entry" aria-label="Add entry">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16283D" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -345,6 +472,8 @@
   <div class="modal-overlay hidden" id="modalOverlay" onclick="if(event.target===this) closeModal()">
     <div class="modal-content" id="modalContent"></div>
   </div>
+
+  <canvas id="confettiCanvas"></canvas>
 </div>
 
 <script type="module">
@@ -413,22 +542,42 @@ const CAT_MAPS = {
 };
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const now = new Date();
+const RING_CIRC = 2 * Math.PI * 26;
 
 // ---------- State ----------
 let currentUser = null;
 let authMode = "signin";
 let entries = [];
 let goals = [];
+let entriesLoaded = false, goalsLoaded = false;
 let selYear = now.getFullYear();
 let selMonth = now.getMonth();
 let breakdownTab = "expense";
-let modalMode = null; // "entry" | "goal" | null
+let activeTab = "home";
+let entrySearchText = "";
+let entryTypeFilter = "all";
+let modalMode = null;
 let editingEntryId = null;
 let entryForm = {type:"expense", category:EXPENSE_CATEGORIES[0].id, note:"", amount:"", status:"pending", goalId:""};
 let goalForm = {name:"", category:GOAL_CATEGORIES[0], targetAmount:"", targetDate:"", startingSaved:""};
+let celebratedGoalIds = new Set();
+let lastCashLeft = null;
+let openSwipeId = null;
 
 function fmt(n){ return (Number(n)||0).toLocaleString("en-IN",{maximumFractionDigits:0}); }
 function escapeHtml(s){ return (s||"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+// ================= TAB NAVIGATION =================
+function switchTab(tab){
+  activeTab = tab;
+  ["home","entries","goals"].forEach(t=>{
+    document.getElementById("view"+t.charAt(0).toUpperCase()+t.slice(1)).classList.toggle("hidden", t!==tab);
+  });
+  document.querySelectorAll(".navlink").forEach(el=>el.classList.toggle("active", el.dataset.tab===tab));
+  document.querySelectorAll(".navlink-mobile").forEach(el=>el.classList.toggle("active", el.dataset.tab===tab));
+  window.scrollTo({top:0, behavior:"instant"});
+}
+window.switchTab = switchTab;
 
 // ================= AUTH =================
 function toggleAuthMode(){
@@ -448,18 +597,12 @@ async function handleAuthSubmit(){
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value;
   const errEl = document.getElementById("loginError");
-  errEl.style.color = "var(--red)";
-  errEl.textContent = "";
+  errEl.style.color = "var(--red)"; errEl.textContent = "";
   if(!email || !password){ errEl.textContent = "Enter both email and password."; return; }
   try{
-    if(authMode === "signin"){
-      await signInWithEmailAndPassword(auth, email, password);
-    } else {
-      await createUserWithEmailAndPassword(auth, email, password);
-    }
-  }catch(e){
-    errEl.textContent = friendlyAuthError(e.code);
-  }
+    if(authMode === "signin") await signInWithEmailAndPassword(auth, email, password);
+    else await createUserWithEmailAndPassword(auth, email, password);
+  }catch(e){ errEl.textContent = friendlyAuthError(e.code); }
 }
 window.handleAuthSubmit = handleAuthSubmit;
 
@@ -471,10 +614,7 @@ async function handleForgotPassword(){
     await sendPasswordResetEmail(auth, email);
     errEl.style.color = "var(--green)";
     errEl.textContent = "Password reset email sent — check your inbox.";
-  }catch(e){
-    errEl.style.color = "var(--red)";
-    errEl.textContent = friendlyAuthError(e.code);
-  }
+  }catch(e){ errEl.style.color = "var(--red)"; errEl.textContent = friendlyAuthError(e.code); }
 }
 window.handleForgotPassword = handleForgotPassword;
 
@@ -499,15 +639,19 @@ onAuthStateChanged(auth, (user)=>{
   if(user){
     document.getElementById("loginScreen").style.display = "none";
     document.getElementById("appScreen").style.display = "block";
+    const initial = (user.email||"?").charAt(0).toUpperCase();
     document.getElementById("userEmailLabel").textContent = user.email;
-    document.getElementById("userAvatar").textContent = (user.email||"?").charAt(0).toUpperCase();
+    document.getElementById("userAvatar").textContent = initial;
+    document.getElementById("userAvatarDesktop").textContent = initial;
+    entriesLoaded = false; goalsLoaded = false;
+    renderAll();
     subscribeToData(user.uid);
   } else {
     document.getElementById("loginScreen").style.display = "flex";
     document.getElementById("appScreen").style.display = "none";
     if(unsubEntries) unsubEntries();
     if(unsubGoals) unsubGoals();
-    entries = []; goals = [];
+    entries = []; goals = []; celebratedGoalIds = new Set(); lastCashLeft = null;
   }
 });
 
@@ -515,12 +659,14 @@ function subscribeToData(userId){
   const entriesQ = query(collection(db, "users", userId, "entries"));
   unsubEntries = onSnapshot(entriesQ, (snap)=>{
     entries = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    entriesLoaded = true;
     renderAll();
   }, (err)=>{ console.error("entries sync error", err); });
 
   const goalsQ = query(collection(db, "users", userId, "goals"));
   unsubGoals = onSnapshot(goalsQ, (snap)=>{
     goals = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    goalsLoaded = true;
     renderAll();
   }, (err)=>{ console.error("goals sync error", err); });
 }
@@ -528,9 +674,7 @@ function subscribeToData(userId){
 // ================= YEAR / MONTH PICKER =================
 function getYears(){
   const s = new Set();
-  const start = now.getFullYear()-1;
-  const end = 2040;
-  for(let y=start;y<=end;y++) s.add(y);
+  for(let y=now.getFullYear()-1;y<=2040;y++) s.add(y);
   entries.forEach(t=>s.add(t.year));
   return Array.from(s).sort((a,b)=>a-b);
 }
@@ -542,18 +686,14 @@ function periodLabel(){
 function renderPicker(){
   const yearRow = document.getElementById("yearRow");
   let html = '<button class="ypill'+(selYear===null?' active':'')+'" onclick="setYear(null)">All</button>';
-  getYears().forEach(y=>{
-    html += '<button class="ypill'+(selYear===y?' active':'')+'" onclick="setYear('+y+')">'+y+'</button>';
-  });
+  getYears().forEach(y=>{ html += '<button class="ypill'+(selYear===y?' active':'')+'" onclick="setYear('+y+')">'+y+'</button>'; });
   yearRow.innerHTML = html;
 
   const monthRow = document.getElementById("monthRow");
   if(selYear===null){ monthRow.innerHTML=""; monthRow.style.display="none"; return; }
   monthRow.style.display="flex";
   let mhtml = '<button class="mpill'+(selMonth===null?' active':'')+'" onclick="setMonth(null)">Whole year</button>';
-  MONTHS.forEach((m,i)=>{
-    mhtml += '<button class="mpill'+(selMonth===i?' active':'')+'" onclick="setMonth('+i+')">'+m+'</button>';
-  });
+  MONTHS.forEach((m,i)=>{ mhtml += '<button class="mpill'+(selMonth===i?' active':'')+'" onclick="setMonth('+i+')">'+m+'</button>'; });
   monthRow.innerHTML = mhtml;
 }
 function setYear(y){ selYear=y; if(y===null) selMonth=null; else if(selMonth===null && y===now.getFullYear()) selMonth=now.getMonth(); renderAll(); }
@@ -587,20 +727,41 @@ function computeKpi(filtered){
     pctPaid: planned>0 ? paid/planned : 0,
   };
 }
+
+function animateNumber(el, from, to, duration, prefix){
+  if(from === null || from === to){ el.textContent = prefix+fmt(to); return; }
+  const start = performance.now();
+  function tick(now2){
+    const t = Math.min(1, (now2-start)/duration);
+    const eased = 1 - Math.pow(1-t, 3);
+    const val = from + (to-from)*eased;
+    el.textContent = prefix+fmt(val);
+    if(t<1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
 function renderKpis(k){
+  const clEl = document.getElementById("kCashLeft");
+  const newCashLeft = k.cashLeft;
+  animateNumber(clEl, lastCashLeft, newCashLeft, 500, "\u20B9");
+  clEl.style.color = newCashLeft<0?"#F2A895":"#fff";
+  lastCashLeft = newCashLeft;
+
   document.getElementById("kSalary").textContent = "\u20B9"+fmt(k.salary);
-  document.getElementById("kPlanned").textContent = "\u20B9"+fmt(k.planned);
   document.getElementById("kPaid").textContent = "\u20B9"+fmt(k.paid);
   document.getElementById("kDue").textContent = "\u20B9"+fmt(k.due);
   document.getElementById("kInvested").textContent = "\u20B9"+fmt(k.invested);
-  const cl = document.getElementById("kCashLeft");
-  cl.textContent = "\u20B9"+fmt(k.cashLeft); cl.style.color = k.cashLeft<0?"#F2A895":"#fff";
+  document.getElementById("kPlanned").textContent = "\u20B9"+fmt(k.planned);
   const pl = document.getElementById("kProjLeft");
   pl.textContent = "\u20B9"+fmt(k.projectedLeft); pl.style.color = k.projectedLeft<0?"var(--red)":"var(--ink)";
   document.getElementById("kPending").textContent = k.pendingCount;
-  document.getElementById("kPct").textContent = Math.round(k.pctPaid*100)+"%";
-  document.getElementById("pctBar").style.width = Math.min(100,k.pctPaid*100)+"%";
-  document.getElementById("pctBar").style.background = k.pctPaid>=1?"var(--green)":"var(--gold)";
+
+  const pct = Math.max(0, Math.min(1, k.pctPaid));
+  document.getElementById("kPct").textContent = Math.round(pct*100)+"%";
+  const ring = document.getElementById("pctRing");
+  ring.style.strokeDashoffset = RING_CIRC * (1-pct);
+  ring.style.stroke = pct>=1 ? "#3F7A5B" : "#E8C766";
 }
 
 // ================= BREAKDOWNS =================
@@ -650,47 +811,57 @@ function classifyGoal(targetDateStr){
   if(m<=36) return "Medium-term";
   return "Long-term";
 }
+function goalCardHtml(g){
+  const saved = goalSaved(g);
+  const remaining = Math.max(0, (Number(g.targetAmount)||0) - saved);
+  const monthsLeft = monthsBetween(g.targetDate);
+  const reqMonthly = remaining>0 ? remaining/monthsLeft : 0;
+  const pct = g.targetAmount>0 ? Math.min(100, (saved/g.targetAmount)*100) : 0;
+  const monthsElapsed = g.createdDate ? Math.max(0,(now.getFullYear()-new Date(g.createdDate).getFullYear())*12+(now.getMonth()-new Date(g.createdDate).getMonth())) : 0;
+  const contributedSoFar = saved - (Number(g.startingSaved)||0);
+  let paceHtml;
+  if(monthsElapsed < 1){
+    paceHtml = '<span class="goal-pace pace-new">New goal</span>';
+  } else {
+    const actualPace = contributedSoFar / monthsElapsed;
+    if(actualPace >= reqMonthly || saved >= g.targetAmount) paceHtml = '<span class="goal-pace pace-ontrack">On track</span>';
+    else paceHtml = '<span class="goal-pace pace-behind">Behind \u2014 \u20B9'+fmt(reqMonthly-actualPace)+'/mo more</span>';
+  }
+  const achieved = saved >= g.targetAmount && g.targetAmount>0;
+  if(achieved && !celebratedGoalIds.has(g.id)){
+    celebratedGoalIds.add(g.id);
+    setTimeout(()=>fireConfetti(), 150);
+  }
+  return '<div class="goal-card">'+
+    '<div class="goal-top"><span class="goal-name">'+escapeHtml(g.name)+'</span><span class="goal-badge">'+classifyGoal(g.targetDate)+'</span></div>'+
+    '<div class="goal-amounts"><b class="mono">\u20B9'+fmt(saved)+'</b> of <b class="mono">\u20B9'+fmt(g.targetAmount)+'</b></div>'+
+    '<div class="goal-bar-bg"><div class="goal-bar-fill" style="width:'+pct+'%;'+(achieved?'background:var(--green)':'')+'"></div></div>'+
+    (achieved ? '<div class="goal-req">Target reached \ud83c\udf89</div>' :
+      '<div class="goal-req">'+monthsLeft+' months left \u00b7 needs \u20B9'+fmt(reqMonthly)+'/mo</div>')+
+    paceHtml+
+    '<div class="goal-actions">'+
+      (achieved ? '<button onclick="markGoalAchieved(\''+g.id+'\')">Mark achieved</button>':'')+
+      '<button onclick="deleteGoal(\''+g.id+'\')">Delete</button>'+
+    '</div>'+
+    '</div>';
+}
 function renderGoals(){
-  const row = document.getElementById("goalsRow");
   const active = goals.filter(g=>g.status!=="achieved");
-  let html = active.map(g=>{
-    const saved = goalSaved(g);
-    const remaining = Math.max(0, (Number(g.targetAmount)||0) - saved);
-    const monthsLeft = monthsBetween(g.targetDate);
-    const reqMonthly = remaining>0 ? remaining/monthsLeft : 0;
-    const pct = g.targetAmount>0 ? Math.min(100, (saved/g.targetAmount)*100) : 0;
+  const addCard = '<div class="addgoal-card" onclick="openGoalModal()"><div class="addgoal-plus"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16283D" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>Add a goal</div>';
 
-    const monthsElapsed = g.createdDate ? Math.max(0,(now.getFullYear()-new Date(g.createdDate).getFullYear())*12+(now.getMonth()-new Date(g.createdDate).getMonth())) : 0;
-    const contributedSoFar = saved - (Number(g.startingSaved)||0);
-    let paceHtml;
-    if(monthsElapsed < 1){
-      paceHtml = '<span class="goal-pace pace-new">New goal</span>';
-    } else {
-      const actualPace = contributedSoFar / monthsElapsed;
-      if(actualPace >= reqMonthly || saved >= g.targetAmount){
-        paceHtml = '<span class="goal-pace pace-ontrack">On track</span>';
-      } else {
-        const shortfall = reqMonthly - actualPace;
-        paceHtml = '<span class="goal-pace pace-behind">Behind \u2014 \u20B9'+fmt(shortfall)+'/mo more</span>';
-      }
-    }
-    const achieved = saved >= g.targetAmount && g.targetAmount>0;
+  if(!goalsLoaded){
+    const sk = '<div class="skeleton" style="width:250px;height:150px;flex:0 0 250px;"></div>';
+    document.getElementById("goalsRowHome").innerHTML = sk+sk;
+    document.getElementById("goalsGridFull").innerHTML = sk+sk+sk;
+    return;
+  }
 
-    return '<div class="goal-card">'+
-      '<div class="goal-top"><span class="goal-name">'+escapeHtml(g.name)+'</span><span class="goal-badge">'+classifyGoal(g.targetDate)+'</span></div>'+
-      '<div class="goal-amounts"><b class="mono">\u20B9'+fmt(saved)+'</b> of <b class="mono">\u20B9'+fmt(g.targetAmount)+'</b></div>'+
-      '<div class="goal-bar-bg"><div class="goal-bar-fill" style="width:'+pct+'%;'+(achieved?'background:var(--green)':'')+'"></div></div>'+
-      (achieved ? '<div class="goal-req">Target reached \ud83c\udf89</div>' :
-        '<div class="goal-req">'+monthsLeft+' months left \u00b7 needs \u20B9'+fmt(reqMonthly)+'/mo</div>')+
-      paceHtml+
-      '<div class="goal-actions">'+
-        (achieved ? '<button onclick="markGoalAchieved(\''+g.id+'\')">Mark achieved</button>':'')+
-        '<button onclick="deleteGoal(\''+g.id+'\')">Delete</button>'+
-      '</div>'+
-      '</div>';
-  }).join("");
-  html += '<div class="addgoal-card" onclick="openGoalModal()"><div class="addgoal-plus"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16283D" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>Add a goal</div>';
-  row.innerHTML = html;
+  const homeHtml = active.slice(0,6).map(goalCardHtml).join("") + addCard;
+  document.getElementById("goalsRowHome").innerHTML = active.length===0
+    ? '<div class="addgoal-card" onclick="openGoalModal()" style="flex:0 0 100%;"><div class="addgoal-plus"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16283D" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>Set your first goal</div>'
+    : homeHtml;
+
+  document.getElementById("goalsGridFull").innerHTML = active.map(goalCardHtml).join("") + addCard;
 }
 window.deleteGoal = async (id)=>{
   if(!confirm("Delete this goal? Its linked contributions stay in your entries, just unlinked.")) return;
@@ -699,6 +870,38 @@ window.deleteGoal = async (id)=>{
 window.markGoalAchieved = async (id)=>{
   await updateDoc(doc(db,"users",currentUser.uid,"goals",id), {status:"achieved"});
 };
+
+// ================= CONFETTI =================
+function fireConfetti(){
+  const canvas = document.getElementById("confettiCanvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const colors = ["#E8C766","#3F7A5B","#3E6FA6","#B54834","#16283D"];
+  const particles = Array.from({length:90}, ()=>({
+    x: canvas.width/2 + (Math.random()-0.5)*120,
+    y: canvas.height*0.35,
+    vx:(Math.random()-0.5)*10,
+    vy:Math.random()*-8-3,
+    size:Math.random()*6+4,
+    color:colors[Math.floor(Math.random()*colors.length)],
+    rot:Math.random()*360,
+    vrot:(Math.random()-0.5)*20,
+  }));
+  let frame=0;
+  function tick(){
+    frame++;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+      p.vy += 0.35; p.x += p.vx; p.y += p.vy; p.rot += p.vrot;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle = p.color; ctx.fillRect(-p.size/2,-p.size/2,p.size,p.size*0.6);
+      ctx.restore();
+    });
+    if(frame<110) requestAnimationFrame(tick);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  tick();
+}
 
 // ================= MODAL =================
 function openModal(){ document.getElementById("modalOverlay").classList.remove("hidden"); }
@@ -709,7 +912,6 @@ function closeModal(){
   goalForm = {name:"", category:GOAL_CATEGORIES[0], targetAmount:"", targetDate:"", startingSaved:""};
 }
 window.closeModal = closeModal;
-
 window.openEntryModal = ()=>{
   modalMode = "entry"; editingEntryId = null;
   entryForm = {type:"expense", category:EXPENSE_CATEGORIES[0].id, note:"", amount:"", status:"pending", goalId:""};
@@ -733,7 +935,6 @@ function renderModal(){
   if(modalMode === "entry"){ c.innerHTML = entryFormHtml(); wireEntryForm(); }
   else if(modalMode === "goal"){ c.innerHTML = goalFormHtml(); wireGoalForm(); }
 }
-
 function catListFor(type){
   return type==="income" ? INCOME_CATEGORIES : type==="investment" ? INVESTMENT_CATEGORIES : EXPENSE_CATEGORIES;
 }
@@ -866,46 +1067,136 @@ window.saveGoal = async ()=>{
 };
 
 // ================= ENTRIES LIST =================
-function entryCard(t){
+function setTypeFilter(f){
+  entryTypeFilter = f;
+  document.querySelectorAll(".fchip").forEach(el=>el.classList.toggle("active", el.dataset.ft===f));
+  renderAll();
+}
+window.setTypeFilter = setTypeFilter;
+
+function entryCard(t, swipeable){
   const meta = (CAT_MAPS[t.type] && CAT_MAPS[t.type][t.category]) || {color:"#999",code:"?"};
   const rowClass = "entry-row"+(t.type==="income"?" income":t.type==="investment"?" investment":"");
   const sign = t.type==="income" ? "+" : t.type==="investment" ? "\u2192" : "\u2212";
   const linkedGoal = t.goalId ? goals.find(g=>g.id===t.goalId) : null;
-  return '<div class="'+rowClass+'">'+
-    '<div class="entry-main">'+
-      '<div class="entry-icon" style="background:'+meta.color+'22;color:'+meta.color+'">'+meta.code+'</div>'+
-      '<div class="entry-body"><div class="entry-title">'+escapeHtml(t.category)+(linkedGoal?'<span class="goal-chip">'+escapeHtml(linkedGoal.name)+'</span>':'')+'</div>'+
-      (t.note?'<div class="entry-note">'+escapeHtml(t.note)+'</div>':'')+'</div>'+
-    '</div>'+
-    '<div class="entry-side">'+
-      '<div class="entry-amt mono">'+sign+'\u20B9'+fmt(t.amount)+'</div>'+
-      (t.type!=="income" ? '<button class="status-btn '+t.status+'" onclick="toggleStatus(\''+t.id+'\')">'+(t.status==="paid"?"Paid":"Pending")+'</button>' : '')+
-      '<button class="iconbtn" onclick="startEditEntry(\''+t.id+'\')" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button>'+
-      '<button class="iconbtn" onclick="deleteEntry(\''+t.id+'\')" title="Delete"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>'+
-    '</div>'+
+  const inner =
+    '<div class="'+rowClass+'" data-id="'+t.id+'">'+
+      '<div class="entry-main">'+
+        '<div class="entry-icon" style="background:'+meta.color+'22;color:'+meta.color+'">'+meta.code+'</div>'+
+        '<div class="entry-body"><div class="entry-title">'+escapeHtml(t.category)+(linkedGoal?'<span class="goal-chip">'+escapeHtml(linkedGoal.name)+'</span>':'')+'</div>'+
+        (t.note?'<div class="entry-note">'+escapeHtml(t.note)+'</div>':'')+'</div>'+
+      '</div>'+
+      '<div class="entry-side">'+
+        '<div class="entry-amt mono">'+sign+'\u20B9'+fmt(t.amount)+'</div>'+
+        (t.type!=="income" ? '<button class="status-btn '+t.status+'" onclick="toggleStatus(\''+t.id+'\')">'+(t.status==="paid"?"Paid":"Pending")+'</button>' : '')+
+        '<button class="iconbtn" onclick="startEditEntry(\''+t.id+'\')" title="Edit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg></button>'+
+      '</div>'+
+    '</div>';
+  if(!swipeable) return inner;
+  return '<div class="entry-wrap" data-wrap-id="'+t.id+'">'+
+    '<div class="entry-delete-behind"><button onclick="deleteEntry(\''+t.id+'\')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Delete</button></div>'+
+    inner+
     '</div>';
 }
-function renderEntries(filtered){
-  const list = document.getElementById("entriesList");
-  if(filtered.length===0){ list.innerHTML = '<div class="empty">Nothing logged for '+periodLabel().toLowerCase()+' yet.</div>'; return; }
-  const income = filtered.filter(t=>t.type==="income").sort((a,b)=>b.amount-a.amount);
-  const investment = filtered.filter(t=>t.type==="investment").sort((a,b)=>b.amount-a.amount);
-  const expense = filtered.filter(t=>t.type==="expense").sort((a,b)=>b.amount-a.amount);
+function groupedEntriesHtml(list, swipeable){
+  const income = list.filter(t=>t.type==="income").sort((a,b)=>b.amount-a.amount);
+  const investment = list.filter(t=>t.type==="investment").sort((a,b)=>b.amount-a.amount);
+  const expense = list.filter(t=>t.type==="expense").sort((a,b)=>b.amount-a.amount);
   let html = "";
-  if(income.length){ html += '<div class="group-label">Income</div>' + income.map(entryCard).join(""); }
-  if(investment.length){ html += '<div class="group-label">Investments</div>' + investment.map(entryCard).join(""); }
-  if(expense.length){ html += '<div class="group-label">Expenses</div>' + expense.map(entryCard).join(""); }
-  list.innerHTML = html;
+  if(income.length){ html += '<div class="group-label">Income</div>' + income.map(t=>entryCard(t,swipeable)).join(""); }
+  if(investment.length){ html += '<div class="group-label">Investments</div>' + investment.map(t=>entryCard(t,swipeable)).join(""); }
+  if(expense.length){ html += '<div class="group-label">Expenses</div>' + expense.map(t=>entryCard(t,swipeable)).join(""); }
+  return html;
 }
+function skeletonRows(n){
+  let h = "";
+  for(let i=0;i<n;i++) h += '<div class="skeleton" style="height:64px;margin-bottom:8px;"></div>';
+  return h;
+}
+function renderEntries(filtered){
+  document.getElementById("periodLabelEntries").textContent = periodLabel();
+
+  // ---- Home preview (last 5, no swipe) ----
+  const recentEl = document.getElementById("recentEntriesList");
+  if(!entriesLoaded){ recentEl.innerHTML = skeletonRows(3); }
+  else if(filtered.length===0){ recentEl.innerHTML = '<div class="empty">Nothing logged for '+periodLabel().toLowerCase()+' yet.</div>'; }
+  else {
+    const recent = filtered.slice().sort((a,b)=>0).slice(0,5);
+    recentEl.innerHTML = groupedEntriesHtml(recent, false);
+  }
+
+  // ---- Full Entries tab (search + filter + swipe) ----
+  const fullEl = document.getElementById("entriesListFull");
+  if(!entriesLoaded){ fullEl.innerHTML = skeletonRows(6); return; }
+  let list = filtered;
+  if(entryTypeFilter !== "all") list = list.filter(t=>t.type===entryTypeFilter);
+  if(entrySearchText.trim()){
+    const q = entrySearchText.trim().toLowerCase();
+    list = list.filter(t=> (t.category||"").toLowerCase().includes(q) || (t.note||"").toLowerCase().includes(q));
+  }
+  if(list.length===0){ fullEl.innerHTML = '<div class="empty">No entries match.</div>'; return; }
+  fullEl.innerHTML = groupedEntriesHtml(list, true);
+  attachSwipeHandlers();
+}
+
+function attachSwipeHandlers(){
+  document.querySelectorAll(".entry-wrap").forEach(wrap=>{
+    const row = wrap.querySelector(".entry-row");
+    const id = wrap.dataset.wrapId;
+    const OPEN_X = -84;
+    let startX = 0, baseX = (openSwipeId===id) ? OPEN_X : 0, dragging = false, moved = false;
+    row.style.transform = "translateX("+baseX+"px)";
+    row.style.transition = "transform .22s ease";
+
+    row.addEventListener("pointerdown", (e)=>{
+      startX = e.clientX; dragging = true; moved = false;
+      row.style.transition = "none";
+      row.setPointerCapture(e.pointerId);
+    });
+    row.addEventListener("pointermove", (e)=>{
+      if(!dragging) return;
+      const delta = e.clientX - startX;
+      if(Math.abs(delta) > 4) moved = true;
+      let x = baseX + delta;
+      x = Math.max(OPEN_X, Math.min(0, x));
+      row.style.transform = "translateX("+x+"px)";
+    });
+    function endDrag(e){
+      if(!dragging) return;
+      dragging = false;
+      row.style.transition = "transform .22s ease";
+      const delta = (e.clientX||startX) - startX;
+      const finalX = baseX + delta;
+      if(finalX < -40){ row.style.transform = "translateX("+OPEN_X+"px)"; openSwipeId = id; }
+      else { row.style.transform = "translateX(0)"; if(openSwipeId===id) openSwipeId = null; }
+    }
+    row.addEventListener("pointerup", endDrag);
+    row.addEventListener("pointercancel", endDrag);
+
+    row.addEventListener("click", (e)=>{
+      if(moved){ e.preventDefault(); e.stopPropagation(); moved=false; return; }
+      if(openSwipeId===id && !e.target.closest(".status-btn") && !e.target.closest(".iconbtn")){
+        row.style.transform = "translateX(0)"; openSwipeId = null;
+      }
+    }, true);
+  });
+}
+
 window.toggleStatus = async (id)=>{
   const t = entries.find(x=>x.id===id);
   if(!t) return;
   await updateDoc(doc(db,"users",currentUser.uid,"entries",id), {status: t.status==="paid"?"pending":"paid"});
 };
 window.deleteEntry = async (id)=>{
-  if(!confirm("Delete this entry?")) return;
   await deleteDoc(doc(db,"users",currentUser.uid,"entries",id));
+  if(openSwipeId===id) openSwipeId = null;
 };
+
+// ================= SEARCH WIRING =================
+document.getElementById("entrySearch").addEventListener("input", (e)=>{
+  entrySearchText = e.target.value;
+  renderEntries(getFiltered());
+});
 
 // ================= MASTER RENDER =================
 function renderAll(){
